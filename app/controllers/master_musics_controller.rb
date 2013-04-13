@@ -140,6 +140,7 @@ class MasterMusicsController < ApplicationController
     users = MasterUser.all.sort{|a,b| b.total_standard_score <=> a.total_standard_score}
     score = []
     total_sscores = []
+    averages = []
     games = MasterGame.all
     users.each do |user|
       user_score = []
@@ -150,12 +151,17 @@ class MasterMusicsController < ApplicationController
       total_sscores.push(user.total_standard_score);
     end
 
+    games.each do |game|
+      averages.push(game.average)
+    end
+
     render :json => {
       :music => MasterMusic.all,
       :users => users,
       :score => score,
       :games => games,
-      :total_sscores => total_sscores
+      :total_sscores => total_sscores,
+      :averages => averages
     }
   end
 end
