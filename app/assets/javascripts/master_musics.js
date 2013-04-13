@@ -4,9 +4,23 @@ function masterMusicsLoader(){
     $.ajax({
       url: 'master_musics/ajax_data',
       type: 'POST',
-      dataType: 'json'
+      dataType: 'json',
+      beforeSend: function(){
+        var spinner_standard_score = $('<td colspan="16"/>');
+        $('#standard-score table tbody').append($('<tr/>').height(300).append(spinner_standard_score));
+        spinner_standard_score.spin();
+
+        var spinnerShown = false;
+        $('.nav a[href="#score"]').on('click.spinner', function(){
+            spinnerShown || setTimeout(function(){
+            var spinner_score = $('<td colspan="15"/>');
+            $('#score table tbody').append($('<tr/>').height(300).append(spinner_score));
+            spinner_score.spin();
+            spinnerShown = true;
+          }, 0);
+        });
+      }
     }).done(function(data){
-      console.log(data);
       var rank = 0, last_score = 999, i, j, name, tmp = [],
       music = data.music,
       score = data.score,
@@ -25,6 +39,7 @@ function masterMusicsLoader(){
       $('#standard-score table tbody').html(tmp.join(''));
 
     }).done(function(data){
+      $('.nav a[href="#score"]').off('click.spinner');
       var rank = 1, last_score, i, j, name, tmp = [],
       music = data.music,
       score = data.score,
@@ -37,7 +52,11 @@ function masterMusicsLoader(){
         if (sscores[i] < last_score) rank++;      
         tmp.push(['<tr><td>', rank, '</td><td>', users[i].name || users[i].account, '</td>'].join(''));
         for (j = 0; j < games.length; j++){
-          tmp.push(['<td><a href ="', score[i][j].url, '">', score[i][j].score.toFixed(score_decimal_level[j]), '</a></td>'].join(''));
+          if (!!score[i][j].url && score[i][j].url.length > 0){
+            tmp.push(['<td><a href ="', score[i][j].url, '">', score[i][j].score.toFixed(score_decimal_level[j]), '</a></td>'].join(''));
+          }else{
+            tmp.push(['<td>', score[i][j].score.toFixed(score_decimal_level[j]), '</td>'].join(''));
+          }            
         }
         tmp.push('</tr>');
         last_score = sscores[i];
