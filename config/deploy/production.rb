@@ -1,6 +1,6 @@
 set :stage, :production
-set :branch, "popkirby-conoha"
+set :branch, 'master'
 set :rails_env, 'production'
 set :migration_role, 'db'
 
-server 'beatech', user: 'beatech', roles: %w{web app db}
+server 'conoha', user: 'k0kubun', roles: %w{web app db}
